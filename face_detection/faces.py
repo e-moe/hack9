@@ -124,7 +124,7 @@ def detect_face(face_file, max_results=4):
     return face[0]
 
 
-def highlight_faces(image, face, output_filename):
+def highlight_faces(image, face, output_filename, camera):
     """Draws a polygon around the faces, then saves to output_filename.
 
     Args:
@@ -143,6 +143,10 @@ def highlight_faces(image, face, output_filename):
     draw.line(box + [box[0]], width=5, fill='#00ff00')
 
     im.save(output_filename)
+
+    #show_build_message(camera, output_filename)
+    #sleep(1)
+    #remove_o(camera)
 
 def is_happy(face):
      if face['joyLikelihood'] == 'LIKELY':
@@ -210,6 +214,7 @@ def main():
     max_results=4
     
     camera = PiCamera()
+    camera.resolution = (1368, 768)
 
     camera.start_preview()
     camera.annotate_text='Initialazing'
@@ -232,9 +237,10 @@ def main():
             with open(input_filename, 'rb') as image:
                 try:
                     face = detect_face(image, max_results)
+                    highlight_faces(image, face, output_filename, camera)
                 except KeyError:
                     continue
-                
+
                 
                 if is_sad(face) and not is_build_started():
                     id = build(buildKey)
@@ -246,7 +252,7 @@ def main():
                     show_build_message(camera, 'ok.png')
                    
                 image.seek(0)
-                highlight_faces(image, face, output_filename)
+                
         except KeyboardInterrupt:
             print('kbd')
             break
