@@ -26,7 +26,6 @@ import sys
 from requests.auth import HTTPBasicAuth
 from picamera import PiCamera
 from time import sleep
-import easygui
 
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
@@ -201,11 +200,11 @@ def main():
                 if is_happy(face) and not is_build_started():
                     id = build(buildKey)
                     print('happy build was started')
-                    easygui.msgbox('happy build was started', title='success')
+                    #easygui.msgbox('happy build was started', title='success')
                 elif is_sad(face) and not is_build_started():
                     id = build(buildKey)
                     print('sad build was started')
-                    easygui.msgbox('sad build was started', title='error')
+                    #easygui.msgbox('sad build was started', title='error')
                    
                 image.seek(0)
                 highlight_faces(image, face, output_filename)
