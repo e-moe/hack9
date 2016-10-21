@@ -22,6 +22,7 @@ import os
 import time
 import random
 import requests
+import sys
 from requests.auth import HTTPBasicAuth
 from picamera import PiCamera
 from time import sleep
@@ -179,33 +180,36 @@ def main():
     sleep(5) 
    
     while True:
-        checkState(buildKey)
-        camera.capture(input_filename)
-        with open(input_filename, 'rb') as image:
-            if is_build_started():
-                print('Building...')
-                continue
-            else:
-                print('Ready for build')
-            
-            try:
-                face = detect_face(image, max_results)
-            except KeyError:
-                continue
-            
-            if is_happy(face) and not is_build_started():
-                id = build(buildKey)
-                print('happy build was started')
-                easygui.msgbox('happy build was started', title='success')
-            elif is_sad(face) and not is_build_started():
-                id = build(buildKey)
-                print('sad build was started')
-                easygui.msgbox('sad build was started', title='error')
-               
-            image.seek(0)
-            highlight_faces(image, face, output_filename)
-
+        try:
+            checkState(buildKey)
+            camera.capture(input_filename)
+            with open(input_filename, 'rb') as image:
+                if is_build_started():
+                    print('Building...')
+                    continue
+                else:
+                    print('Ready for build')
+                
+                try:
+                    face = detect_face(image, max_results)
+                except KeyError:
+                    continue
+                
+                if is_happy(face) and not is_build_started():
+                    id = build(buildKey)
+                    print('happy build was started')
+                    easygui.msgbox('happy build was started', title='success')
+                elif is_sad(face) and not is_build_started():
+                    id = build(buildKey)
+                    print('sad build was started')
+                    easygui.msgbox('sad build was started', title='error')
+                   
+                image.seek(0)
+                highlight_faces(image, face, output_filename)
+        except KeyboardInterrupt:
+            break
     camera.stop_preview()
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
