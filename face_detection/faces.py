@@ -63,7 +63,10 @@ def detect_face(face_file, max_results=4):
 
     face = response['responses'][0]['faceAnnotations']
 
-    a = face['joyLikelihood']
+    print('Joy: {}'.format(face[0]['joyLikelihood']))
+    print('Sorrow: {}'.format(face[0]['sorrowLikelihood']))
+    print('Angry: {}'.format(face[0]['angerLikelihood']))
+    print('Surprise: {}'.format(face[0]['surpriseLikelihood']))
 
     return face
 
@@ -99,22 +102,25 @@ def main():
     
     camera = PiCamera()
 
-    camera.start_preview()
+    #camera.start_preview()
     sleep(5)
-    camera.capture(input_filename)
-    camera.stop_preview()
-
     
-    with open(input_filename, 'rb') as image:
-        faces = detect_face(image, max_results)
-        print('Found {} face{}'.format(
-            len(faces), '' if len(faces) == 1 else 's'))
+    
 
-        print('Writing to file {}'.format(output_filename))
-        # Reset the file pointer, so we can read the file again
-        image.seek(0)
-        highlight_faces(image, faces, output_filename)
+    while True:
+        
+        camera.capture(input_filename)
+        with open(input_filename, 'rb') as image:
+            faces = detect_face(image, max_results)
+            print('Found {} face{}'.format(
+                len(faces), '' if len(faces) == 1 else 's'))
 
+            print('Writing to file {}'.format(output_filename))
+            # Reset the file pointer, so we can read the file again
+            image.seek(0)
+            highlight_faces(image, faces, output_filename)
+
+    camera.stop_preview()
 
 if __name__ == '__main__':
     main()
