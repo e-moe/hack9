@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "labinskiy-owncloud",
+  "private_key_id": "21dc6d680d930f0e1391c823198103610aacdbd8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIfM6kGAibsp0H\niKkIcCDMZFIw2T+ghL846AShPYWh4l05iHMEMidZZPiChxi/yvLP56cn//mZNsLX\nfIaeTIqjOtxjeIXj1Loy9hldcHb/92zAAEoYBe2B7xAMDVKy4KJKV7nstYt+EmoC\nMQkOEzxUDOszTcmrvg7yCSwGclCHV2fh/wx3W3X77wd9MxKWIRiQfCMpABhCzRGm\nf1IqjzGqFCVvdfp7Ez4rhXRwa4PoGZu6ctNc3lgvMNRUXqDfjFrduZ5rFA8MjLC/\nLnqQF3B1bME9iYSh7E/43Nf4Cuqc/OMCRSFAvSWtT6J9NtGsRVGAY/MfXlKSPBKN\nHXGHtQfjAgMBAAECggEAdhSEBEOfdkw5jkFgBPc9agRAIEMj5V+p3FNSvsCkXxca\nfxMtYrBDWrRMZVw6KGPYpLi0S6vIjwOguBfAlaVRFhhJy1Al02zsCa3GfLELdXB9\nnYvOF94N57QsiFykc3Q4QX7vo0m9kZA43XeR9LdBleNR95J+D+fNl6HtSxKy+TJn\nvj85nGVQhJWOcyAc4hUnyTv+aR/fyEaxST6sH7bPS+Fd0kEg2m+if1Xsnbp/wFEU\nnGxnLhhOYvzrB3PRou8kgtVRfwZihf8YZJZnZP+6G95fnGslfY6uNhgvF0uarEc8\n/ohWkTaQSITrQN2rBZq1fpffKmEkFzghJ5aN6f5RAQKBgQDkccJ7WxEXNmd2Uw03\nvcV/VLryW0gbdh4OlgU5QOzSnrKEsMDqcCCtORcK4O9i1QCyUcUzizJb+3dMj+Vq\nS0HarzDhPP+SI/Apfew2L1SDfqVMMSftSt12hGQkly/M+VVlCJwanEu4q9gNU3P8\nBDUqLSy/46OhnwY17UIMFS+rgQKBgQDgq8FJYn5te5KESW2+BRemzO4xcINeEw5H\n+yC7NzMMULRQkdOtN8I6/8/+XyJ6LkOp/M96aNoOeNnjorWgTmvWm32Z5onKKm0e\nPA971aXxGTzCbA9xtCk6RKFPG60skA5xg8F3HaW88boy7wGOlT/Cc9SxNk1QnRGU\npxMrqcQ1YwKBgQCbIs4qK2vt0ZptdnUxd4SZthbG40qSq6I50ZN2kCrD1dXx2n8I\nNmFagbyuPJcVDQXOE03SdSMb6CfaLJZlmvn74qFVNLFys0kzRDqXiYjhS65BkdhF\ng2PmSn4fgzSJBIIDfNdWEvIxVTIByrynVswr+kW7goHrDi2PjbIetnyLAQKBgD/p\nPAO3LAXS+Dv/c2NxqWe+tieEPSp+uzpIuufm7POc5Z5hzVhiGzOTX8SZpYIiNQdf\nLlpBB37EbB8wQwCGLnEPLGyiQyIqbX4DUdhFT35FUp5wBPiwamXz7ftGAT5DAIjU\nFS3gVixoizJAAS5hUJDtSFzc+KNs+vpRiMeL9I/HAoGAEDA4O2tGcsmIRptm05OG\nYi5JwfMRwkFoWFrfcYeaEpPRcfEmKvMMn8XeiJdROqxiv2iytNP9wTke1UzUopVu\nkRug46sVgkK2MGlsQKfjdF3IB48yaGzTLNnkfC/rvIwHWZe7Z1URW/5/oqQ9B+ev\nfn3rg4xgJ3iS0XDFCkbUSP4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "api-admin@labinskiy-owncloud.iam.gserviceaccount.com",
+  "client_id": "114448477918173022772",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/api-admin%40labinskiy-owncloud.iam.gserviceaccount.com"
+}

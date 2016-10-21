@@ -152,24 +152,28 @@ def is_happy(face):
      return False
 
 def is_sad(face):
-     if face['sorrowLikelihood'] == 'LIKELY':
-          return True
-     if face['sorrowLikelihood'] == 'VERY_LIKELY':
-          return True
-     if face['angerLikelihood'] == 'LIKELY':
-          return True
-     if face['angerLikelihood'] == 'VERY_LIKELY':
-          return True
-     return False
+    if face['sorrowLikelihood'] == 'LIKELY':
+        return True
+    if face['sorrowLikelihood'] == 'VERY_LIKELY':
+        return True
+    if face['sorrowLikelihood'] == 'POSSIBLE':
+        return True
+    if face['angerLikelihood'] == 'LIKELY':
+        return True
+    if face['angerLikelihood'] == 'VERY_LIKELY':
+        return True
+    if face['angerLikelihood'] == 'POSSIBLE':
+        return True
+    return False
 
 def is_build_started():
      global id
      return id != 0
 
-def show_success_build_message(camera):
+def show_build_message(camera, fname):
     global o
     # Load the arbitrarily sized image
-    img = Image.open('success.png')
+    img = Image.open(fname)
     # Create an image padded to the required size with
     # mode 'RGB'
     pad = Image.new('RGB', (
@@ -231,15 +235,15 @@ def main():
                 except KeyError:
                     continue
                 
-                if is_happy(face) and not is_build_started():
-                    id = build(buildKey)
-                    print('happy build was started')
-                    #easygui.msgbox('happy build was started', title='success')
-                    show_success_build_message(camera)
-                elif is_sad(face) and not is_build_started():
+                
+                if is_sad(face) and not is_build_started():
                     id = build(buildKey)
                     print('sad build was started')
-                    #easygui.msgbox('sad build was started', title='error')
+                    show_build_message(camera, 'nook.png')
+                elif is_happy(face) and not is_build_started():
+                    id = build(buildKey)
+                    print('happy build was started')
+                    show_build_message(camera, 'ok.png')
                    
                 image.seek(0)
                 highlight_faces(image, face, output_filename)
