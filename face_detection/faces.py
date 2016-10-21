@@ -23,6 +23,7 @@ import time
 import random
 import requests
 import sys
+import traceback
 from requests.auth import HTTPBasicAuth
 from picamera import PiCamera
 from time import sleep
@@ -34,6 +35,7 @@ from PIL import ImageDraw
 
 id = 0
 buildKey = 'ZIP-ZIP'
+o = None
 
 def build(key):
     url = "https://drukwerkdeal.atlassian.net/builds/rest/api/latest/queue/" + key
@@ -164,9 +166,10 @@ def is_build_started():
      global id
      return id != 0
 
-def show_success_build_message():
+def show_success_build_message(camera):
+    global o
     # Load the arbitrarily sized image
-    img = Image.open('check.png')
+    img = Image.open('success.png')
     # Create an image padded to the required size with
     # mode 'RGB'
     pad = Image.new('RGB', (
@@ -178,17 +181,24 @@ def show_success_build_message():
     
     # Add the overlay with the padded image as the source,
     # but the original image's dimensions
-    o = camera.add_overlay(pad.tostring(), size=img.size)
+    o = camera.add_overlay(pad.tobytes(), size=img.size)
     # By default, the overlay is in layer 0, beneath the
     # preview (which defaults to layer 2). Here we make
     # the new overlay semi-transparent, then move it above
     # the preview
     o.alpha = 128
     o.layer = 3
-     
+
+def remove_o(camera):
+    global o
+    if o != None:
+        camera.remove_overlay(o)
+        o = None
+
 def main():
     global buildKey
     global id
+    global o
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']='/home/pi/hack9/key.json'
 
     input_filename='image.jpg'
@@ -211,6 +221,7 @@ def main():
                 continue
             else:
                 print('Ready for build')
+                remove_o(camera)
                 camera.annotate_text='Ready for build'
             
             camera.capture(input_filename)
@@ -224,7 +235,7 @@ def main():
                     id = build(buildKey)
                     print('happy build was started')
                     #easygui.msgbox('happy build was started', title='success')
-                    show_success_build_message()
+                    show_success_build_message(camera)
                 elif is_sad(face) and not is_build_started():
                     id = build(buildKey)
                     print('sad build was started')
@@ -235,7 +246,13 @@ def main():
         except KeyboardInterrupt:
             print('kbd')
             break
+        except Exception:
+            traceback.print_exc(file=sys.stdout)
+            camera.stop_preview()
+            sys.exit(0)
+            break
     print('stop preveiw')
+    remove_o(camera)
     camera.stop_preview()
     sys.exit(0)
 
