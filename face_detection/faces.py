@@ -217,6 +217,7 @@ def main():
     camera.resolution = (1368, 768)
 
     camera.start_preview()
+    camera.annotate_text_size = 128
     camera.annotate_text='Initialazing'
     #sleep(5)
    
