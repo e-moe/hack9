@@ -175,18 +175,24 @@ def main():
     
     camera = PiCamera()
 
-    #camera.start_preview()
+    camera.start_preview()
     sleep(5) 
    
     while True:
-        print('.')
         checkState(buildKey)
         camera.capture(input_filename)
         with open(input_filename, 'rb') as image:
+            if is_build_started():
+                print('Building...')
+                continue
+            else:
+                print('Ready for build')
+            
             try:
                 face = detect_face(image, max_results)
             except KeyError:
                 continue
+            
             if is_happy(face) and not is_build_started():
                 id = build(buildKey)
                 print('happy build was started')
@@ -195,8 +201,6 @@ def main():
                 id = build(buildKey)
                 print('sad build was started')
                 easygui.msgbox('sad build was started', title='error')
-            elif is_build_started():
-                print('Building....')
                
             image.seek(0)
             highlight_faces(image, face, output_filename)
