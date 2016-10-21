@@ -176,7 +176,8 @@ def main():
     camera = PiCamera()
 
     camera.start_preview()
-    sleep(5) 
+    camera.annotate_text='Initialazing'
+    sleep(5)
    
     while True:
         checkState(buildKey)
@@ -184,9 +185,11 @@ def main():
         with open(input_filename, 'rb') as image:
             if is_build_started():
                 print('Building...')
+                camera.annotate_text='Building...'
                 continue
             else:
                 print('Ready for build')
+                camera.annotate_text='Ready for'
             
             try:
                 face = detect_face(image, max_results)
