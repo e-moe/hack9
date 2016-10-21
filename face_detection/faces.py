@@ -25,6 +25,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from picamera import PiCamera
 from time import sleep
+import easygui
 
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
@@ -42,6 +43,7 @@ def build(key):
         headers = {'accept': 'application/json', 'Content-Type': 'application/json'},
         data='{}'
     ).json()
+    print('Build started')
     return myResponse['buildNumber']
 
 def checkState(key):
@@ -49,7 +51,7 @@ def checkState(key):
     
     if id:
         url = 'https://drukwerkdeal.atlassian.net/builds/rest/api/latest/result/' + key + '-' + str(id)
-        print(url)
+        #print(url)
         latest = requests.get(
             url,
             auth = HTTPBasicAuth('dmyroshnychenko', 'dmyroshnychenko_jira'),
@@ -58,7 +60,7 @@ def checkState(key):
         buildUrl = ''
     else:
         url = 'https://drukwerkdeal.atlassian.net/builds/rest/api/latest/result/' + key
-        print(url)
+        #print(url)
         myResponse = requests.get(
             url,
             auth = HTTPBasicAuth('dmyroshnychenko', 'dmyroshnychenko_jira'),
@@ -69,8 +71,8 @@ def checkState(key):
 
     #for key in latest:
     #    print(key + " : " + str(latest[key]))
-    print(latest['buildState'])
-    print(latest['buildNumber'])
+    #print(latest['buildState'])
+    #print(latest['buildNumber'])
 
     if latest['lifeCycleState'] == 'Finished':
         id = 0
@@ -120,7 +122,7 @@ def detect_face(face_file, max_results=4):
     return face[0]
 
 
-def highlight_faces(image, faces, output_filename):
+def highlight_faces(image, face, output_filename):
     """Draws a polygon around the faces, then saves to output_filename.
 
     Args:
@@ -133,39 +135,39 @@ def highlight_faces(image, faces, output_filename):
     im = Image.open(image)
     draw = ImageDraw.Draw(im)
 
-    for face in faces:
-        box = [(v.get('x', 0.0), v.get('y', 0.0))
-               for v in face['fdBoundingPoly']['vertices']]
-        draw.line(box + [box[0]], width=5, fill='#00ff00')
+
+    box = [(v.get('x', 0.0), v.get('y', 0.0))
+           for v in face['fdBoundingPoly']['vertices']]
+    draw.line(box + [box[0]], width=5, fill='#00ff00')
 
     im.save(output_filename)
 
 def is_happy(face):
-	if face['joyLikelihood'] == 'LIKELY':
-		return True
-	if face['joyLikelihood'] == 'VERY_LIKELY':
-		return True
-	return False
+     if face['joyLikelihood'] == 'LIKELY':
+          return True
+     if face['joyLikelihood'] == 'VERY_LIKELY':
+          return True
+     return False
 
 def is_sad(face):
-	if face['sorrowLikelihood'] == 'LIKELY':
-		return True
-	if face['sorrowLikelihood'] == 'VERY_LIKELY':
-		return True
-	if face['angerLikelihood'] == 'LIKELY':
-		return True
-	if face['angerLikelihood'] == 'VERY_LIKELY':
-		return True
-	return False
+     if face['sorrowLikelihood'] == 'LIKELY':
+          return True
+     if face['sorrowLikelihood'] == 'VERY_LIKELY':
+          return True
+     if face['angerLikelihood'] == 'LIKELY':
+          return True
+     if face['angerLikelihood'] == 'VERY_LIKELY':
+          return True
+     return False
 
 def is_build_started():
-	global id
-	return id != 0
-	
+     global id
+     return id != 0
+     
 def main():
-	global buildKey
+    global buildKey
+    global id
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']='/home/pi/hack9/key.json'
-
 
     input_filename='image.jpg'
     output_filename='out.jpg'
@@ -177,20 +179,27 @@ def main():
     sleep(5) 
    
     while True:
+        print('.')
         checkState(buildKey)
         camera.capture(input_filename)
         with open(input_filename, 'rb') as image:
-            face = detect_face(image, max_results)
-            
-			if is_happy(face) and not is_build_started()
-				build(buildKey)
-				print('happy build was started')
-			else if is_sad(face) and not is_build_started()
-				build(buildKey)
-				print('sad build was started')
-			
+            try:
+                face = detect_face(image, max_results)
+            except KeyError:
+                continue
+            if is_happy(face) and not is_build_started():
+                id = build(buildKey)
+                print('happy build was started')
+                easygui.msgbox('happy build was started', title='success')
+            elif is_sad(face) and not is_build_started():
+                id = build(buildKey)
+                print('sad build was started')
+                easygui.msgbox('sad build was started', title='error')
+            elif is_build_started():
+                print('Building....')
+               
             image.seek(0)
-            highlight_faces(image, faces, output_filename)
+            highlight_faces(image, face, output_filename)
 
     camera.stop_preview()
 
