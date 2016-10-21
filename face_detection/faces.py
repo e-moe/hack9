@@ -19,6 +19,10 @@
 import argparse
 import base64
 import os
+import time
+import random
+import requests
+from requests.auth import HTTPBasicAuth
 from picamera import PiCamera
 from time import sleep
 
@@ -27,6 +31,51 @@ from oauth2client.client import GoogleCredentials
 from PIL import Image
 from PIL import ImageDraw
 
+id = 0
+buildKey = 'SS-SB'
+
+def build(key):
+    url = "https://drukwerkdeal.atlassian.net/builds/rest/api/latest/queue/" + key
+    myResponse = requests.post(
+        url,
+        auth = HTTPBasicAuth('dmyroshnychenko', 'dmyroshnychenko_jira'),
+        headers = {'accept': 'application/json', 'Content-Type': 'application/json'},
+        data='{}'
+    ).json()
+    return myResponse['buildNumber']
+
+def checkState(key):
+    global id
+    
+    if id:
+        url = 'https://drukwerkdeal.atlassian.net/builds/rest/api/latest/result/' + key + '-' + str(id)
+        print(url)
+        latest = requests.get(
+            url,
+            auth = HTTPBasicAuth('dmyroshnychenko', 'dmyroshnychenko_jira'),
+            headers = {'accept': 'application/json', 'Content-Type': 'application/json'}
+        ).json()
+        buildUrl = ''
+    else:
+        url = 'https://drukwerkdeal.atlassian.net/builds/rest/api/latest/result/' + key
+        print(url)
+        myResponse = requests.get(
+            url,
+            auth = HTTPBasicAuth('dmyroshnychenko', 'dmyroshnychenko_jira'),
+            headers = {'accept': 'application/json', 'Content-Type': 'application/json'}
+        ).json()
+
+        latest = myResponse['results']['result'][0]
+
+    #for key in latest:
+    #    print(key + " : " + str(latest[key]))
+    print(latest['buildState'])
+    print(latest['buildNumber'])
+
+    if latest['lifeCycleState'] == 'Finished':
+        id = 0
+    
+    
 
 # [START get_vision_service]
 def get_vision_service():
@@ -68,7 +117,7 @@ def detect_face(face_file, max_results=4):
     print('Angry: {}'.format(face[0]['angerLikelihood']))
     print('Surprise: {}'.format(face[0]['surpriseLikelihood']))
 
-    return face
+    return face[0]
 
 
 def highlight_faces(image, faces, output_filename):
@@ -91,8 +140,30 @@ def highlight_faces(image, faces, output_filename):
 
     im.save(output_filename)
 
+def is_happy(face):
+	if face['joyLikelihood'] == 'LIKELY':
+		return True
+	if face['joyLikelihood'] == 'VERY_LIKELY':
+		return True
+	return False
 
+def is_sad(face):
+	if face['sorrowLikelihood'] == 'LIKELY':
+		return True
+	if face['sorrowLikelihood'] == 'VERY_LIKELY':
+		return True
+	if face['angerLikelihood'] == 'LIKELY':
+		return True
+	if face['angerLikelihood'] == 'VERY_LIKELY':
+		return True
+	return False
+
+def is_build_started():
+	global id
+	return id != 0
+	
 def main():
+	global buildKey
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']='/home/pi/hack9/key.json'
 
 
@@ -103,20 +174,21 @@ def main():
     camera = PiCamera()
 
     #camera.start_preview()
-    sleep(5)
-    
-    
-
+    sleep(5) 
+   
     while True:
-        
+        checkState(buildKey)
         camera.capture(input_filename)
         with open(input_filename, 'rb') as image:
-            faces = detect_face(image, max_results)
-            print('Found {} face{}'.format(
-                len(faces), '' if len(faces) == 1 else 's'))
-
-            print('Writing to file {}'.format(output_filename))
-            # Reset the file pointer, so we can read the file again
+            face = detect_face(image, max_results)
+            
+			if is_happy(face) and not is_build_started()
+				build(buildKey)
+				print('happy build was started')
+			else if is_sad(face) and not is_build_started()
+				build(buildKey)
+				print('sad build was started')
+			
             image.seek(0)
             highlight_faces(image, faces, output_filename)
 
