@@ -33,7 +33,7 @@ from PIL import Image
 from PIL import ImageDraw
 
 id = 0
-buildKey = 'SS-SB'
+buildKey = 'ZIP-ZIP'
 
 def build(key):
     url = "https://drukwerkdeal.atlassian.net/builds/rest/api/latest/queue/" + key
@@ -177,21 +177,22 @@ def main():
 
     camera.start_preview()
     camera.annotate_text='Initialazing'
-    sleep(5)
+    #sleep(5)
    
     while True:
         try:
             checkState(buildKey)
+
+            if is_build_started():
+                print('Building...')
+                camera.annotate_text='Building...'
+                continue
+            else:
+                print('Ready for build')
+                camera.annotate_text='Ready for build'
+            
             camera.capture(input_filename)
             with open(input_filename, 'rb') as image:
-                if is_build_started():
-                    print('Building...')
-                    camera.annotate_text='Building...'
-                    continue
-                else:
-                    print('Ready for build')
-                    camera.annotate_text='Ready for'
-                
                 try:
                     face = detect_face(image, max_results)
                 except KeyError:
@@ -209,7 +210,9 @@ def main():
                 image.seek(0)
                 highlight_faces(image, face, output_filename)
         except KeyboardInterrupt:
+            print('kbd')
             break
+    print('stop preveiw')
     camera.stop_preview()
     sys.exit(0)
 
