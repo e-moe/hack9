@@ -49,6 +49,7 @@ api = TwitterAPI(CONSUMER_KEY,
 id = 0
 buildKey = 'ZIP-ZIP'
 o = None
+twitterHashTag = '#hack9build'
 
 def build(key):
     url = "https://drukwerkdeal.atlassian.net/builds/rest/api/latest/queue/" + key
@@ -280,12 +281,12 @@ def main():
                     id = build(buildKey)
                     print('sad build was started')
                     show_build_message(camera, 'nook.png')
-                    send_twitter_message('#DWDtest your build with id='+str(id)+' will be reverted')
+                    send_twitter_message(twitterHashTag+' your build with id='+str(id)+' will be reverted')
                 elif is_happy(face) and not is_build_started():
                     id = build(buildKey)
                     print('happy build was started')
                     show_build_message(camera, 'ok.png')
-                    send_twitter_message('#DWDtest your build with id='+str(id)+' was started successfully')
+                    send_twitter_message(twitterHashTag+' your build with id='+str(id)+' was started successfully')
                    
                 image.seek(0)
                 
