@@ -219,11 +219,18 @@ def remove_o(camera):
 def send_twitter_message(text):
     try:
         #api.request('statuses/update', {'status': text})
+        # STEP 1 - upload image
         file = open('out.jpg', 'rb')
         data = file.read()
-        r = api.request('statuses/update_with_media',
-                       {'status': text},
-                       {'media[]': data})
+        r = api.request('media/upload', None, {'media': data})
+        print('UPLOAD MEDIA SUCCESS' if r.status_code == 200 else 'UPLOAD MEDIA FAILURE')
+
+        # STEP 2 - post tweet with a reference to uploaded image
+        if r.status_code == 200:
+           media_id = r.json()['media_id']
+           r = api.request(
+               'statuses/update', {'status': text, 'media_ids': media_id})
+           print('UPDATE STATUS SUCCESS' if r.status_code == 200 else 'UPDATE STATUS FAILURE')
     except Exception:
         traceback.print_exc(file=sys.stdout)
     print('twitter message was sent')
