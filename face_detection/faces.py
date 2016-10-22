@@ -218,7 +218,12 @@ def remove_o(camera):
 
 def send_twitter_message(text):
     try:
-        api.request('statuses/update', {'status': text})
+        #api.request('statuses/update', {'status': text})
+        file = open('out.jpg', 'rb')
+        data = file.read()
+        r = api.request('statuses/update_with_media',
+                       {'status': text},
+                       {'media[]': data})
     except Exception:
         traceback.print_exc(file=sys.stdout)
     print('twitter message was sent')
