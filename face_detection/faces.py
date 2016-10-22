@@ -216,6 +216,14 @@ def remove_o(camera):
         camera.remove_overlay(o)
         o = None
 
+def send_twitter_message(text):
+    try:
+        api.request('statuses/update', {'status': text})
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+    print('twitter message was sent')
+    
+
 def main():
     global buildKey
     global id
@@ -260,12 +268,12 @@ def main():
                     id = build(buildKey)
                     print('sad build was started')
                     show_build_message(camera, 'nook.png')
-                    api.request('statuses/update', {'status': '#DWD test ok'})
+                    send_twitter_message('#DWDtest your build with id='+str(id)+' will be reverted')
                 elif is_happy(face) and not is_build_started():
                     id = build(buildKey)
                     print('happy build was started')
                     show_build_message(camera, 'ok.png')
-                    api.request('statuses/update', {'status': '#DWD test nook'})
+                    send_twitter_message('#DWDtest your build with id='+str(id)+' was started successfully')
                    
                 image.seek(0)
                 
