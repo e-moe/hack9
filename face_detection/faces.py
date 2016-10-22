@@ -232,6 +232,7 @@ def send_twitter_message(text):
            r = api.request(
                'statuses/update', {'status': text, 'media_ids': media_id})
            print('UPDATE STATUS SUCCESS' if r.status_code == 200 else 'UPDATE STATUS FAILURE')
+        file.close()
     except Exception:
         traceback.print_exc(file=sys.stdout)
     print('twitter message was sent')
