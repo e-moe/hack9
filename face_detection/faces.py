@@ -33,6 +33,19 @@ from oauth2client.client import GoogleCredentials
 from PIL import Image
 from PIL import ImageDraw
 
+from TwitterAPI import TwitterAPI
+
+
+CONSUMER_KEY = 'gztUP9Qzq6wYNdkp74Mvx1jXX'
+CONSUMER_SECRET = 'myPrTBMfl7fxrwi43tceuJrqNNKlURvEOh5NLhtNsB2Rh34Rvg'
+ACCESS_TOKEN_KEY = '3366068657-xrnljoddBdU0aAfNxm7zpawByrzRzaw7SUcsXem'
+ACCESS_TOKEN_SECRET = 'SBWefFsjZTqmLoSyQd7Hcr6ib4HgPT6kdJ2cdEq6vLMJi'
+
+api = TwitterAPI(CONSUMER_KEY,
+    CONSUMER_SECRET,
+    ACCESS_TOKEN_KEY,
+    ACCESS_TOKEN_SECRET)
+
 id = 0
 buildKey = 'ZIP-ZIP'
 o = None
@@ -247,10 +260,12 @@ def main():
                     id = build(buildKey)
                     print('sad build was started')
                     show_build_message(camera, 'nook.png')
+                    api.request('statuses/update', {'status': '#DWD test ok'})
                 elif is_happy(face) and not is_build_started():
                     id = build(buildKey)
                     print('happy build was started')
                     show_build_message(camera, 'ok.png')
+                    api.request('statuses/update', {'status': '#DWD test nook'})
                    
                 image.seek(0)
                 
